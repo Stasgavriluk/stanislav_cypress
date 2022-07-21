@@ -1,11 +1,9 @@
 import {sign_in_page} from "../selectors/sign_in_page";
-import {user_info} from "../selectors/sign_in_page";
 
 describe('UI tests for sign in page', () => {
 
-    beforeEach('visiting sign in page', () => {
+    before('visiting sign in page', () => {
         cy.visit('/')
-        cy.intercept("POST", "/users").as("signup")
     })
 
     it('should show "Real World App logo"', () => {
@@ -30,17 +28,20 @@ describe('UI tests for sign in page', () => {
     })
 
     it('should show Username is required error if user clicks on it and then click outside this field', () => {
+        cy.reload()
         cy.get(sign_in_page.username_required).should('not.exist')
         cy.get('.makeStyles-root-1').click()
         cy.get(sign_in_page.username_required).should('be.visible')
     })
 
     it('check "Remember me" checkbox', () => {
-        cy.get(sign_in_page.checkbox).check()
+        cy.get(sign_in_page.checkbox).should('not.be.checked')
+            .check().should('be.checked')
     })
 
     it('should show disabled by default sign in btn', () => {
-        //cy.get('.makeStyles-root-1').click()  //can complete test with click everywhere and then button will be disabled
+        cy.reload()
+        // cy.get('.makeStyles-root-1').click()   if we click anywhere button will be disabled
         cy.get(sign_in_page.button).should('be.disabled') //button is not disabled by default
     })
 
@@ -52,38 +53,6 @@ describe('UI tests for sign in page', () => {
 
     it('should show Cypress copyright link that leads to https://www.cypress.io/', () => {
         cy.get(sign_in_page.copyright).should('have.attr', 'href', 'https://cypress.io')
-    })
-
-    // Homework 19.07:
-    // 1. should allow a visitor to sign-up
-    // 2. should allow a visitor to login
-    // 3. should allow a visitor to logout
-
-    it('should allow a visitor to sign-up', () => {
-
-        cy.get(sign_in_page.link).click()
-        cy.get(sign_in_page.signup_title).should("be.visible").and("contain", "Sign Up")
-        cy.get(sign_in_page.signup_first_name).type(user_info.first_name)
-        cy.get(sign_in_page.signup_last_name).type(user_info.last_name)
-        cy.get(sign_in_page.signup_username).type(user_info.username)
-        cy.get(sign_in_page.signup_password).type(user_info.password)
-        cy.get(sign_in_page.signup_confirm_password).type(user_info.password)
-        cy.get(sign_in_page.signup_submit).click()
-        cy.wait("@signup")
-    })
-
-    it('should allow a visitor to login', () => {
-        cy.get(sign_in_page.username_field).type(user_info.username)
-        cy.get(sign_in_page.password_field).type(user_info.password)
-        cy.get(sign_in_page.checkbox).check()
-        cy.get(sign_in_page.button).click()
-    })
-})
-
-describe('UI test for logout', () => {
-
-    it('should allow a visitor to logout', () => {
-        cy.get(sign_in_page.log_out).click()
-        cy.location("pathname").should("eq", "/signin")
+            .and('have.attr', 'target', '_blank')
     })
 })
