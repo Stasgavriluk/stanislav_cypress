@@ -1,25 +1,20 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+import {sign_in_page} from "../selectors/sign_in_page";
+
+Cypress.Commands.add("ui_login", (username, password, { rememberUser = false } = {}) => {
+    const signinPath = "/signin"
+    cy.intercept("POST", "/login").as("loginUser");
+    cy.location("pathname", { log: false }).then((currentPath) => {
+        if (currentPath !== signinPath) {
+            cy.visit(signinPath);
+        }
+    })
+    cy.get(sign_in_page.username_field).type(username);
+    cy.get(sign_in_page.password_field).type(password);
+
+    if (rememberUser) {
+        cy.get(sign_in_page.checkbox).find("input").check();
+    }
+
+    cy.get(sign_in_page.signin_submit).click();
+    cy.wait("@loginUser")
+})

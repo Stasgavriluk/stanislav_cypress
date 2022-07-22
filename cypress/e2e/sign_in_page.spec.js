@@ -42,13 +42,14 @@ describe('UI tests for sign in page', () => {
     it('should show disabled by default sign in btn', () => {
         cy.reload()
         // cy.get('.makeStyles-root-1').click()   if we click anywhere button will be disabled
-        cy.get(sign_in_page.button).should('be.disabled') //button is not disabled by default
+        cy.get(sign_in_page.signin_submit).should('be.disabled') //button is not disabled by default
     })
 
     it('should have Don\'t have an account? Sign Up clickable link under Sign in btn', () => {
         cy.get(sign_in_page.link).should('be.visible').and('have.attr', 'href', '/signup')
             .click()
         cy.url().should('contain', '/signup')
+        cy.go("back")
     })
 
     it('should show Cypress copyright link that leads to https://www.cypress.io/', () => {

@@ -7,7 +7,7 @@ export const sign_in_page = {
     password_placeholders: '#password-label',
     username_required: '.MuiFormHelperText-root',
     checkbox: '.PrivateSwitchBase-input-14',
-    button: "[data-test='signin-submit']",
+    signin_submit: "[data-test='signin-submit']",
     link: "[data-test='signup']",
     copyright: "[rel='noopener noreferrer']",
 
@@ -19,11 +19,15 @@ export const sign_in_page = {
     signup_confirm_password: "[data-test='signup-confirmPassword']",
     signup_submit: "[data-test='signup-submit']",
 
-    log_out: "[data-test='sidenav-signout']"
+    username_validation_message: '#username-helper-text',
+    password_validation_message: '#password-helper-text',
+    sign_in_error: '[data-test="signin-error"]',
+
+    log_out: "[data-test='sidenav-signout']",
 }
 export const user_info = {
-    first_name: "Bob",
-    last_name: "Ross",
-    username: "PainterJoy90",
-    password: "s3cret",
+    first_name: "Stas",
+    last_name: "Boss",
+    username: "Boooom132",
+    password: "RestTest1",
 }
