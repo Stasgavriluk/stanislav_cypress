@@ -19,15 +19,15 @@ export const sign_in_page = {
     signup_confirm_password: "[data-test='signup-confirmPassword']",
     signup_submit: "[data-test='signup-submit']",
 
+    sign_in_error: '[data-test="signin-error"]',
     username_validation_message: '#username-helper-text',
     password_validation_message: '#password-helper-text',
-    sign_in_error: '[data-test="signin-error"]',
 
     log_out: "[data-test='sidenav-signout']",
 }
 export const user_info = {
     first_name: "Stas",
     last_name: "Boss",
-    username: "Boooom132",
+    username: "Trent",
     password: "RestTest1",
 }
