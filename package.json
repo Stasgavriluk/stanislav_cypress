@@ -4,17 +4,17 @@
    "description": "educational project for cypress course",
    "main": "index.js",
    "scripts": {
-     "test": "echo \"Error: no test specified\" && exit 1"
+      "test": "echo \"Error: no test specified\" && exit 1"
    },
    "keywords": [
-     "cypress",
-     "edu",
-     "course",
-     "demo"
+      "cypress",
+      "edu",
+      "course",
+      "demo"
    ],
    "author": "Stas Gavrilyuk",
    "license": "MIT",
    "devDependencies": {
-     "cypress": "^10.3.0"
+      "cypress": "^10.3.1"
    }
- }
+}
