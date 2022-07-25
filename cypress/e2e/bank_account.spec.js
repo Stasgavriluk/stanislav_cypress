@@ -23,6 +23,9 @@ describe('bank accounts tests', () => {
         cy.get(main_page.routing_number).type('567').blur()
         cy.get(main_page.routing_number_validation_message).should('be.visible').and('have.text', 'Must contain a valid routing number')
         cy.get(main_page.routing_number).clear()
+        cy.get(main_page.routing_number).type('1234214232').blur()
+        cy.get(main_page.routing_number_validation_message).should('be.visible').and('have.text', 'Must contain a valid routing number')
+        cy.get(main_page.routing_number).clear()
     })
 
     it('should show error for account number field', () => {
@@ -31,6 +34,9 @@ describe('bank accounts tests', () => {
         cy.get(main_page.account_number_validation_message).should('be.visible').and('have.text', 'Enter a valid bank account number')
         cy.get(main_page.account_number).type('567').blur()
         cy.get(main_page.account_number_validation_message).should('be.visible').and('have.text', 'Must contain at least 9 digits')
+        cy.get(main_page.account_number).clear()
+        cy.get(main_page.account_number).type('1424124142141424').blur()
+        cy.get(main_page.account_number_validation_message).should('be.visible').and('have.text', 'Must contain no more than 12 digits')
         cy.get(main_page.account_number).clear()
     })
 
@@ -41,11 +47,11 @@ describe('bank accounts tests', () => {
 
     // delete bank account
     it('should delete bank account', () => {
-        // cy.ui_logout()
-        // cy.ui_login(user_info.username, user_info.password)
-        // cy.get(main_page.onboarding_dialog_content).should('be.visible')
-        // cy.get('[data-test="user-onboarding-next"]').click()
-        // cy.ui_onboarding()
+        cy.reload()
+        cy.ui_login(user_info.username, user_info.password)
+        cy.get(main_page.onboarding_dialog_content).should('be.visible')
+        cy.get('[data-test="user-onboarding-next"]').click()
+        cy.ui_onboarding()
         cy.get(main_page.bank_accounts_button).should('be.visible').click()
         cy.get(main_page.bank_accounts_list).should('be.visible')
         cy.get(main_page.bank_accounts_delete).should('be.visible').click()

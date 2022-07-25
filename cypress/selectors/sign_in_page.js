@@ -28,6 +28,6 @@ export const sign_in_page = {
 export const user_info = {
     first_name: "Stas",
     last_name: "Boss",
-    username: "Arnold2",
+    username: "Arnold8",
     password: "RestTest2!",
 }
