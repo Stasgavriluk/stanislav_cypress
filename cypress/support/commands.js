@@ -2,18 +2,14 @@ import {sign_in_page, user_info} from "../selectors/sign_in_page";
 import {main_page} from "../selectors/main_page.selector";
 
 Cypress.Commands.add("ui_login", (username, password, { rememberUser = false } = {}) => {
-    const signinPath = "/signin"
-    cy.intercept("POST", "/login").as("loginUser");
-    cy.location("pathname", { log: false }).then((currentPath) => {
-        if (currentPath !== signinPath) {
-            cy.visit(signinPath);
-        }
-    })
-    cy.get(sign_in_page.username_field).type(username);
-    cy.get(sign_in_page.password_field).type(password);
+    cy.visit("/signin")
+    cy.intercept("POST", "/login").as("loginUser")
+
+    cy.get(sign_in_page.username_field).type(username)
+    cy.get(sign_in_page.password_field).type(password)
 
     if (rememberUser) {
-        cy.get(sign_in_page.checkbox).find("input").check();
+        cy.get(sign_in_page.checkbox).find("input").check()
     }
 
     cy.get(sign_in_page.signin_submit).click();
@@ -21,12 +17,7 @@ Cypress.Commands.add("ui_login", (username, password, { rememberUser = false } =
 })
 
 Cypress.Commands.add("ui_sign_up", () => {
-    const signupPath = "/signup"
-    cy.location("pathname", { log: false }).then((currentPath) => {
-        if (currentPath !== signupPath) {
-            cy.visit(signupPath);
-        }
-    })
+    cy.visit("/signup")
     cy.get(sign_in_page.signup_title).should("be.visible").and("contain", "Sign Up")
     cy.get(sign_in_page.signup_first_name).type(user_info.first_name)
     cy.get(sign_in_page.signup_last_name).type(user_info.last_name)

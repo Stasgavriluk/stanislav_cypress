@@ -41,15 +41,15 @@ describe('bank accounts tests', () => {
 
     // delete bank account
     it('should delete bank account', () => {
-        cy.ui_logout()
-        cy.ui_login(user_info.username, user_info.password)
-        cy.get(main_page.onboarding_dialog_content).should('be.visible')
-        cy.get('[data-test="user-onboarding-next"]').click()
-        cy.ui_onboarding()
+        // cy.ui_logout()
+        // cy.ui_login(user_info.username, user_info.password)
+        // cy.get(main_page.onboarding_dialog_content).should('be.visible')
+        // cy.get('[data-test="user-onboarding-next"]').click()
+        // cy.ui_onboarding()
         cy.get(main_page.bank_accounts_button).should('be.visible').click()
         cy.get(main_page.bank_accounts_list).should('be.visible')
         cy.get(main_page.bank_accounts_delete).should('be.visible').click()
-        cy.get(main_page.bank_accounts_list).should('have.text', 'Privat Bank (Deleted)')
+        cy.get(main_page.bank_accounts_list).contains( 'Deleted')
     })
 })
 

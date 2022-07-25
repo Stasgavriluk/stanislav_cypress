@@ -46,10 +46,7 @@ describe('UI tests for sign in page', () => {
     })
 
     it('should have Don\'t have an account? Sign Up clickable link under Sign in btn', () => {
-        cy.get(sign_in_page.link).should('be.visible').and('have.attr', 'href', '/signup')
-            .click()
-        cy.url().should('contain', '/signup')
-        cy.go("back")
+        cy.get(sign_in_page.link).should('be.visible').should('have.text', "Don't have an account? Sign Up").and('have.attr', 'href', '/signup')
     })
 
     it('should show Cypress copyright link that leads to https://www.cypress.io/', () => {
