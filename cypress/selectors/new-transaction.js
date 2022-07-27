@@ -1,0 +1,15 @@
+export const transaction = {
+    new_transaction: "[data-test='nav-top-new-transaction']",
+    user_list_search_input: '#user-list-search-input',
+    user_list: "[data-test='users-list']",
+    create_amount_input: '#amount',
+    create_description_input: '#transaction-create-description-input',
+    create_submit_payment: "[data-test='transaction-create-submit-payment']",
+    create_submit_request: "[data-test='transaction-create-submit-request']",
+    alert_bar_success: "[data-test='alert-bar-success']",
+    create_another_transaction: "[data-test='new-transaction-create-another-transaction']",
+    return_to_transactions: "[data-test='new-transaction-return-to-transactions']",
+    app_name_logo: "[data-test='app-name-logo']",
+    personal_tab: "[data-test='nav-personal-tab']",
+    transaction_list: "[data-test='transaction-list']",
+}
