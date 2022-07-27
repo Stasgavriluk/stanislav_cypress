@@ -11,6 +11,9 @@ export const sign_in_page = {
     link: "[data-test='signup']",
     copyright: "[rel='noopener noreferrer']",
 
+    signin_username: "[data-test='signin-username']",
+    signin_password: "[data-test='signin-password']",
+
     signup_title: "[data-test='signup-title']",
     signup_first_name: "[data-test='signup-first-name']",
     signup_last_name: "[data-test='signup-last-name']",

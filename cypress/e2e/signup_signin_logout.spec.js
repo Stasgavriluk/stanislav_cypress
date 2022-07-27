@@ -1,5 +1,6 @@
 import {sign_in_page, user_info} from "../selectors/sign_in_page";
 import {sign_up_page} from "../selectors/sign_up_page";
+import {main_page} from "../selectors/main_page.selector";
 
 describe('UI test for sign-up, login and logout', () => {
     before('Visit sign-up page', () => {
@@ -57,6 +58,9 @@ describe('UI test for sign-up, login and logout', () => {
 
     //logout
     it('should allow a visitor to logout', () => {
+        cy.get(main_page.onboarding_dialog_content).should('be.visible')
+        cy.get('[data-test="user-onboarding-next"]').click()
+        cy.ui_onboarding()
         cy.ui_logout()
     })
 

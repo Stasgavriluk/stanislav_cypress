@@ -4,8 +4,8 @@ import {main_page} from "../selectors/main_page.selector";
 Cypress.Commands.add("ui_login", () => {
     cy.visit("/signin")
     cy.intercept("POST", "/login").as("loginUser")
-    cy.get(sign_in_page.signup_username).type(user_info.username)
-    cy.get(sign_in_page.signup_password).type(user_info.password)
+    cy.get(sign_in_page.signin_username).type(user_info.username)
+    cy.get(sign_in_page.signin_password).type(user_info.password)
     cy.get(sign_in_page.signin_submit).click();
     cy.wait("@loginUser")
 })
