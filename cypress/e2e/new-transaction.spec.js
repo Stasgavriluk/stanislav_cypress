@@ -16,7 +16,6 @@ describe('New Transaction', () => {
             description: "Sushi dinner 🍣",
         }
         cy.get(transaction.user_list_search_input).type(another_user_info.first_name)
-        cy.wait("@usersSearch")
         cy.get(transaction.user_list).contains(another_user_info.first_name).click()
         cy.get(transaction.create_amount_input).type(payment.amount)
         cy.get(transaction.create_description_input).type(payment.description)
@@ -25,7 +24,6 @@ describe('New Transaction', () => {
         cy.get(transaction.create_another_transaction).click()
         cy.get(transaction.app_name_logo).click()
         cy.get(transaction.personal_tab).click().should('have.class', 'Mui-selected')
-        cy.wait("@personalTransactions")
         cy.get(transaction.transaction_list).first().should('contain', payment.description)
         cy.get(transaction.alert_bar_success).should('not.exist')
     })
@@ -36,7 +34,6 @@ describe('New Transaction', () => {
             description: "Fancy Hotel 🏨",
         }
         cy.get(transaction.user_list_search_input).type(another_user_info.first_name)
-        cy.wait("@usersSearch")
         cy.get(transaction.user_list).contains(another_user_info.first_name).click()
         cy.get(transaction.create_amount_input).type(request.amount)
         cy.get(transaction.create_description_input).type(request.description)
@@ -66,7 +63,6 @@ describe('New Transaction', () => {
             description: "Indian Food",
         }
         cy.get(transaction.user_list_search_input).type(another_user_info.first_name)
-        cy.wait("@usersSearch")
         cy.get(transaction.user_list).contains(another_user_info.first_name).click()
         cy.get(transaction.create_amount_input).type(payment.amount)
         cy.get(transaction.create_description_input).type(payment.description)
@@ -74,7 +70,6 @@ describe('New Transaction', () => {
         cy.get(transaction.alert_bar_success).should('be.visible').and('have.text', 'Transaction Submitted!')
         cy.switch_user()
         cy.get(transaction.personal_tab).click().should('have.class', 'Mui-selected')
-        cy.wait("@personalTransactions")
         cy.get(transaction.transaction_list).first().should('contain', payment.description)
 
 
@@ -86,7 +81,6 @@ describe('New Transaction', () => {
             description: "Fancy Hotel 🏨",
         }
         cy.get(transaction.user_list_search_input).type(another_user_info.first_name)
-        cy.wait("@usersSearch")
         cy.get(transaction.user_list).contains(another_user_info.first_name).click()
         cy.get(transaction.create_amount_input).type(request.amount)
         cy.get(transaction.create_description_input).type(request.description)
@@ -94,7 +88,6 @@ describe('New Transaction', () => {
         cy.get(transaction.alert_bar_success).should('be.visible').and('have.text', 'Transaction Submitted!')
         cy.switch_user()
         cy.get(transaction.personal_tab).click().should('have.class', 'Mui-selected')
-        cy.wait("@personalTransactions")
         cy.get(transaction.transaction_list).first().should('contain', request.description)
     })
 
