@@ -1,8 +1,11 @@
-import {sign_in_page, user_info} from "../selectors/sign_in_page";
+import {sign_in_page} from "../selectors/sign_in_page";
 import {sign_up_page} from "../selectors/sign_up_page";
 import {main_page} from "../selectors/main_page.selector";
 
 describe('UI test for sign-up, login and logout', () => {
+    const userName = "Kilian"
+    const password = "RestTest1!"
+
     before('Visit sign-up page', () => {
         cy.visit('/')
         cy.get(sign_in_page.link).click()
@@ -48,12 +51,12 @@ describe('UI test for sign-up, login and logout', () => {
 
     // sign-up
     it('should allow a visitor to sign-up', () => {
-        cy.ui_sign_up()
+        cy.ui_sign_up(userName, password)
     })
 
     // login
     it('should allow a visitor to login', () => {
-        cy.ui_login(user_info.username, user_info.password)
+        cy.ui_login(userName, password)
     })
 
     //logout

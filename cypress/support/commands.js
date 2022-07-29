@@ -1,24 +1,23 @@
-import {sign_in_page, user_info, another_user_info} from "../selectors/sign_in_page";
+import {sign_in_page} from "../selectors/sign_in_page";
 import {main_page} from "../selectors/main_page.selector";
 
-
-Cypress.Commands.add("ui_login", () => {
+Cypress.Commands.add("ui_login", (userName, password) => {
     cy.visit("/signin")
     cy.intercept("POST", "/login").as("loginUser")
-    cy.get(sign_in_page.signin_username).type(user_info.username)
-    cy.get(sign_in_page.signin_password).type(user_info.password)
+    cy.get(sign_in_page.signin_username).type(userName)
+    cy.get(sign_in_page.signin_password).type(password)
     cy.get(sign_in_page.signin_submit).click()
     cy.wait("@loginUser")
 })
 
-Cypress.Commands.add("ui_sign_up", () => {
+Cypress.Commands.add("ui_sign_up", (userName, password) => {
     cy.visit("/signup")
     cy.get(sign_in_page.signup_title).should("be.visible").and("contain", "Sign Up")
-    cy.get(sign_in_page.signup_first_name).type(user_info.first_name)
-    cy.get(sign_in_page.signup_last_name).type(user_info.last_name)
-    cy.get(sign_in_page.signup_username).type(user_info.username)
-    cy.get(sign_in_page.signup_password).type(user_info.password)
-    cy.get(sign_in_page.signup_confirm_password).type(user_info.password)
+    cy.get(sign_in_page.signup_first_name).type('Aleks')
+    cy.get(sign_in_page.signup_last_name).type('Morgan')
+    cy.get(sign_in_page.signup_username).type(userName)
+    cy.get(sign_in_page.signup_password).type(password)
+    cy.get(sign_in_page.signup_confirm_password).type(password)
     cy.get(sign_in_page.signup_submit).click()
 })
 
@@ -35,10 +34,3 @@ Cypress.Commands.add("ui_logout", () => {
     cy.url().should('contain', '/signin')
 })
 
-Cypress.Commands.add("switch_user", () => {
-    cy.ui_logout()
-    cy.get(sign_in_page.signin_username).type(another_user_info.username)
-    cy.get(sign_in_page.signin_password).type(another_user_info.password)
-    cy.get(sign_in_page.signin_submit).click()
-    cy.get(sign_in_page.sidenav_username).contains(another_user_info.username)
-})

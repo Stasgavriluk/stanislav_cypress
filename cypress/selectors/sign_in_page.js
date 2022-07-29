@@ -29,17 +29,3 @@ export const sign_in_page = {
     log_out: "[data-test='sidenav-signout']",
     sidenav_username: "[data-test='sidenav-username']"
 }
-
-export const user_info = {
-    first_name: "Kaylin",
-    last_name: "Homenick",
-    username: "Allie2",
-    password: "s3cret",
-}
-
-export const another_user_info = {
-    first_name: "Arely",
-    last_name: "Kertzmann",
-    username: "Tavares_Barrows",
-    password: "s3cret",
-}

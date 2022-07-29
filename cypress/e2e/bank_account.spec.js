@@ -1,10 +1,12 @@
-import {user_info} from "../selectors/sign_in_page";
 import {main_page} from "../selectors/main_page.selector";
 
 describe('bank accounts tests', () => {
+    const userName = "Kilian"
+    const password = "RestTest1!"
+
     before('visit onboarding page', () => {
-        cy.ui_sign_up()
-        cy.ui_login(user_info.username, user_info.password)
+        cy.ui_sign_up(userName, password)
+        cy.ui_login(userName, password)
         cy.get(main_page.onboarding_dialog_content).should('be.visible')
         cy.get('[data-test="user-onboarding-next"]').click()
     })
@@ -48,7 +50,7 @@ describe('bank accounts tests', () => {
     // delete bank account
     it('should delete bank account', () => {
         cy.reload()
-        cy.ui_login(user_info.username, user_info.password)
+        cy.ui_login(userName, password)
         cy.get(main_page.onboarding_dialog_content).should('be.visible')
         cy.get('[data-test="user-onboarding-next"]').click()
         cy.ui_onboarding()
