@@ -3,7 +3,7 @@ import {sign_up_page} from "../selectors/sign_up_page";
 import {main_page} from "../selectors/main_page.selector";
 
 describe('UI test for sign-up, login and logout', () => {
-    const userName = "Kilian"
+    const userName = "Kilian12"
     const password = "RestTest1!"
 
     before('Visit sign-up page', () => {
