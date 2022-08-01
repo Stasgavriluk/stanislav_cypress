@@ -1,7 +1,7 @@
 import {main_page} from "../selectors/main_page.selector";
 
 describe('bank accounts tests', () => {
-    const userName = "Kilian"
+    const userName = "Kilian11"
     const password = "RestTest1!"
 
     before('visit onboarding page', () => {
@@ -50,6 +50,7 @@ describe('bank accounts tests', () => {
     // delete bank account
     it('should delete bank account', () => {
         cy.reload()
+        cy.ui_sign_up(userName, password)
         cy.ui_login(userName, password)
         cy.get(main_page.onboarding_dialog_content).should('be.visible')
         cy.get('[data-test="user-onboarding-next"]').click()

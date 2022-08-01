@@ -3,15 +3,16 @@ import {main_page} from "../selectors/main_page.selector";
 
 Cypress.Commands.add("ui_login", (userName, password) => {
     cy.visit("/signin")
-    cy.intercept("POST", "/login").as("loginUser")
+    cy.intercept("POST", "/login").as("signin")
     cy.get(sign_in_page.signin_username).type(userName)
     cy.get(sign_in_page.signin_password).type(password)
     cy.get(sign_in_page.signin_submit).click()
-    cy.wait("@loginUser")
+    cy.wait("@signin")
 })
 
 Cypress.Commands.add("ui_sign_up", (userName, password) => {
     cy.visit("/signup")
+    cy.intercept("POST", "/users").as("signup")
     cy.get(sign_in_page.signup_title).should("be.visible").and("contain", "Sign Up")
     cy.get(sign_in_page.signup_first_name).type('Aleks')
     cy.get(sign_in_page.signup_last_name).type('Morgan')
@@ -19,6 +20,7 @@ Cypress.Commands.add("ui_sign_up", (userName, password) => {
     cy.get(sign_in_page.signup_password).type(password)
     cy.get(sign_in_page.signup_confirm_password).type(password)
     cy.get(sign_in_page.signup_submit).click()
+    cy.wait("@signup")
 })
 
 Cypress.Commands.add("ui_onboarding", () => {

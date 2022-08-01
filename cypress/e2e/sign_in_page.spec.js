@@ -39,10 +39,9 @@ describe('UI tests for sign in page', () => {
             .check().should('be.checked')
     })
 
-    it('should show disabled by default sign in btn', () => {
+    it('should show enabled by default sign in btn', () => {
         cy.reload()
-        // cy.get('.makeStyles-root-1').click()   if we click anywhere button will be disabled
-        cy.get(sign_in_page.signin_submit).should('be.disabled') //button is not disabled by default
+        cy.get(sign_in_page.signin_submit).should('be.enabled')
     })
 
     it('should have Don\'t have an account? Sign Up clickable link under Sign in btn', () => {
