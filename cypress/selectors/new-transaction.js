@@ -1,6 +1,6 @@
 export const transaction = {
     new_transaction_button: "[data-test='nav-top-new-transaction']",
-    search_input: '#user-list-search-input',
+    search_input: '[data-test="user-list-search-input"]',
     contacts_list_item: '[data-test*="user-list-item"]',
     contacts_list: "[data-test='users-list']",
     selected_contact_title: ".MuiBox-root > .MuiGrid-container > :nth-child(2) > .MuiTypography-root",
@@ -26,7 +26,7 @@ export const transaction = {
         cy.get(transaction.contacts_list)
             .should("be.visible")
             .contains("Edgar Johns")
-            .click()
+            .click({ force: true })
         cy.get(transaction.selected_contact_title).should(
             "have.text", "Edgar Johns")
         cy.get(transaction.amount_field)
@@ -46,7 +46,7 @@ export const transaction = {
         cy.get(transaction.contacts_list)
             .should("be.visible")
             .contains("Edgar Johns")
-            .click();
+            .click({ force: true })
         cy.get(transaction.selected_contact_title).should(
             "have.text",
             "Edgar Johns"

@@ -50,7 +50,7 @@ describe('New Transaction', () => {
     })
 
     it("displays new transaction errors", function () {
-        cy.get(transaction.contacts_list).contains(targetUser.firstName).click()
+        cy.get(transaction.contacts_list).contains(targetUser.firstName).click({ force: true })
         cy.get(transaction.amount_field).type("43").clear().blur()
         cy.get(transaction.amount_validation_message).should("be.visible")
             .and("contain", "Please enter a valid amount")
@@ -64,7 +64,7 @@ describe('New Transaction', () => {
         searchAttrs.forEach((attr) => {
             it(`Searching by "${attr}" attribute`, () => {
                 cy.wait("@getUsers")
-                cy.get(transaction.search_input).type(targetUser[attr])
+                cy.get(transaction.search_input).click({force: true}).type(targetUser[attr])
                 cy.wait("@usersSearch")
                     .its("response.body.results")
                     .should("have.length.gt", 0)

@@ -1,7 +1,9 @@
-import {main_page} from "../selectors/main_page.selector";
+/// <reference types="cypress" />
+import { functions } from "../helpers/functions";
+import { main_page } from "../selectors/main_page.selector";
 
 describe('bank accounts tests', () => {
-    const userName = "Kilian11"
+    const userName = functions.generateUsername()
     const password = "RestTest1!"
 
     before('visit onboarding page', () => {
