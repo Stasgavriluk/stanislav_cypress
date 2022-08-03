@@ -23,6 +23,10 @@ describe('New Transaction', () => {
         phoneNumber: "625-316-9882",
     }
 
+    before("db-seed", () => {
+        cy.task("db:seed");
+    });
+
     beforeEach('visit main page', () => {
         cy.intercept("GET", "/users").as("getUsers");
         cy.intercept("POST", "/transactions").as("createTransaction");
@@ -85,6 +89,10 @@ context("User is able to receive pay and request transactions", () => {
     const payerUserName = "Allie2";
     const receiverUserName = "Katharina_Bernier";
     const password = "s3cret";
+
+    before("db-seed", () => {
+        cy.task("db:seed");
+    });
 
     beforeEach("signin", () => {
         cy.intercept("GET", "/users").as("getUsers")

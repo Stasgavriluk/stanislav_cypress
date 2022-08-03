@@ -7,6 +7,7 @@ describe('bank accounts tests', () => {
     const password = "RestTest1!"
 
     before('visit onboarding page', () => {
+        cy.task("db:seed");
         cy.ui_sign_up(userName, password)
         cy.ui_login(userName, password)
         cy.get(main_page.onboarding_dialog_content).should('be.visible')

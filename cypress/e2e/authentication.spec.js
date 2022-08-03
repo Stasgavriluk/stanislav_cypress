@@ -7,6 +7,7 @@ import { sign_up_page } from "../selectors/sign_up_page";
 describe('UI tests for sign in page', () => {
 
     before('visiting sign in page', () => {
+        cy.task("db:seed");
         cy.visit('/')
     })
 
