@@ -23,6 +23,10 @@ describe('New Transaction', () => {
         phoneNumber: "625-316-9882",
     }
 
+    before("db-seed", () => {
+        cy.task("db:seed");
+    });
+
     beforeEach('visit main page', () => {
         cy.intercept("GET", "/users").as("getUsers");
         cy.intercept("POST", "/transactions").as("createTransaction");
@@ -50,7 +54,7 @@ describe('New Transaction', () => {
     })
 
     it("displays new transaction errors", function () {
-        cy.get(transaction.contacts_list).contains(targetUser.firstName).click()
+        cy.get(transaction.contacts_list).contains(targetUser.firstName).click({ force: true })
         cy.get(transaction.amount_field).type("43").clear().blur()
         cy.get(transaction.amount_validation_message).should("be.visible")
             .and("contain", "Please enter a valid amount")
@@ -64,7 +68,7 @@ describe('New Transaction', () => {
         searchAttrs.forEach((attr) => {
             it(`Searching by "${attr}" attribute`, () => {
                 cy.wait("@getUsers")
-                cy.get(transaction.search_input).type(targetUser[attr])
+                cy.get(transaction.search_input).click({force: true}).type(targetUser[attr])
                 cy.wait("@usersSearch")
                     .its("response.body.results")
                     .should("have.length.gt", 0)
@@ -85,6 +89,10 @@ context("User is able to receive pay and request transactions", () => {
     const payerUserName = "Allie2";
     const receiverUserName = "Katharina_Bernier";
     const password = "s3cret";
+
+    before("db-seed", () => {
+        cy.task("db:seed");
+    });
 
     beforeEach("signin", () => {
         cy.intercept("GET", "/users").as("getUsers")

@@ -9,5 +9,5 @@ export const sign_up_page = {
     username_validation_message: '#username-helper-text',
     password_validation_message: '#password-helper-text',
     confirm_password_validation_message: '#confirmPassword-helper-text',
-
+    signup_submit: "[data-test='signup-submit']",
 }

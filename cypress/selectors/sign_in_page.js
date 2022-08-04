@@ -20,7 +20,6 @@ export const sign_in_page = {
     signup_username: "[data-test='signup-username']",
     signup_password: "[data-test='signup-password']",
     signup_confirm_password: "[data-test='signup-confirmPassword']",
-    signup_submit: "[data-test='signup-submit']",
 
     sign_in_error: '[data-test="signin-error"]',
     username_validation_message: '#username-helper-text',

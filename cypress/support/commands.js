@@ -1,4 +1,5 @@
 import {sign_in_page} from "../selectors/sign_in_page";
+import {sign_up_page} from "../selectors/sign_up_page";
 import {main_page} from "../selectors/main_page.selector";
 
 Cypress.Commands.add("ui_login", (userName, password) => {
@@ -19,7 +20,7 @@ Cypress.Commands.add("ui_sign_up", (userName, password) => {
     cy.get(sign_in_page.signup_username).type(userName)
     cy.get(sign_in_page.signup_password).type(password)
     cy.get(sign_in_page.signup_confirm_password).type(password)
-    cy.get(sign_in_page.signup_submit).click()
+    cy.get(sign_up_page.signup_submit).click()
     cy.wait("@signup")
 })
 
