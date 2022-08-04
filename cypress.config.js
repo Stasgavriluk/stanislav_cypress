@@ -16,7 +16,6 @@ module.exports = defineConfig({
     setupNodeEvents(on, config) {
       on("task", {
         async "db:seed"() {
-          // seed database with test data
           const { data } = await axios.post(`${testDataApiEndpoint}/seed`);
           return data;
         },
