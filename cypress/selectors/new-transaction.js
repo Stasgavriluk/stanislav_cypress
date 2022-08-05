@@ -19,7 +19,11 @@ export const transaction = {
     transaction_list: "[data-test='transaction-list']",
     accept_transaction_request_button:
         '[data-test*="transaction-accept-request"]',
+    reject_transaction_request_button:
+        '[data-test*="transaction-reject-request"]',
     transaction_item: '[data-test*="transaction-item"]',
+    tabs: '[data-test="nav-transaction-tabs"]',
+    detail_header: '[data-test="transaction-detail-header"]',
 
     createPayTransaction(transactionAmount, noteText) {
         cy.wait("@getUsers")
