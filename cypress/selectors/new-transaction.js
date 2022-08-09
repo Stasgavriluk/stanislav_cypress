@@ -16,6 +16,8 @@ export const transaction = {
     return_to_transactions: "[data-test='new-transaction-return-to-transactions']",
     app_name_logo: "[data-test='app-name-logo']",
     personal_tab: "[data-test='nav-personal-tab']",
+    everyone_tab: '[data-test="nav-public-tab"]',
+    friends_tab: '[data-test="nav-contacts-tab"]',
     transaction_list: "[data-test='transaction-list']",
     accept_transaction_request_button:
         '[data-test*="transaction-accept-request"]',
@@ -25,14 +27,18 @@ export const transaction = {
     tabs: '[data-test="nav-transaction-tabs"]',
     detail_header: '[data-test="transaction-detail-header"]',
 
-    createPayTransaction(transactionAmount, noteText) {
+    createPayTransaction(
+        transactionAmount,
+        noteText,
+        receiverName = "Edgar Johns"
+    ) {
         cy.wait("@getUsers")
         cy.get(transaction.contacts_list)
             .should("be.visible")
-            .contains("Edgar Johns")
+            .contains(receiverName)
             .click({ force: true })
         cy.get(transaction.selected_contact_title).should(
-            "have.text", "Edgar Johns")
+            "have.text", receiverName)
         cy.get(transaction.amount_field)
             .type(transactionAmount)
             .should("contain.value", transactionAmount);
@@ -45,15 +51,19 @@ export const transaction = {
         cy.get(transaction.alert_bar_success).should('be.visible').and('have.text', 'Transaction Submitted!')
 
     },
-    createRequestTransaction(transactionAmount, noteText) {
+    createRequestTransaction(
+        transactionAmount,
+        noteText,
+        receiverName = "Edgar Johns"
+    ) {
         cy.wait("@getUsers");
         cy.get(transaction.contacts_list)
             .should("be.visible")
-            .contains("Edgar Johns")
+            .contains(receiverName)
             .click({ force: true })
         cy.get(transaction.selected_contact_title).should(
             "have.text",
-            "Edgar Johns"
+            receiverName
         );
         cy.get(transaction.amount_field)
             .type(transactionAmount)
