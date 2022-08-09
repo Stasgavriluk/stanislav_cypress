@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
-import { functions } from "../helpers/functions";
-import { main_page } from "../selectors/main_page.selector";
+import {functions} from "../helpers/functions";
+import {main_page} from "../selectors/main_page.selector";
 
 describe('bank accounts tests', () => {
     const userName = functions.generateUsername()
@@ -61,7 +61,7 @@ describe('bank accounts tests', () => {
         cy.get(main_page.bank_accounts_button).should('be.visible').click()
         cy.get(main_page.bank_accounts_list).should('be.visible')
         cy.get(main_page.bank_accounts_delete).should('be.visible').click()
-        cy.get(main_page.bank_accounts_list).contains( 'Deleted')
+        cy.get(main_page.bank_accounts_list).contains('Deleted')
     })
 })
 

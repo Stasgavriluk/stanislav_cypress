@@ -1,8 +1,8 @@
 /// <reference types="cypress" />
-import { functions } from "../helpers/functions";
-import { main_page } from "../selectors/main_page.selector";
-import { sign_in_page } from "../selectors/sign_in_page";
-import { sign_up_page } from "../selectors/sign_up_page";
+import {functions} from "../helpers/functions";
+import {main_page} from "../selectors/main_page.selector";
+import {sign_in_page} from "../selectors/sign_in_page";
+import {sign_up_page} from "../selectors/sign_up_page";
 
 describe('UI tests for sign in page', () => {
 

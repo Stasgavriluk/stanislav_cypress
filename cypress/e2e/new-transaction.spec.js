@@ -54,7 +54,7 @@ describe('New Transaction', () => {
     })
 
     it("displays new transaction errors", function () {
-        cy.get(transaction.contacts_list).contains(targetUser.firstName).click({ force: true })
+        cy.get(transaction.contacts_list).contains(targetUser.firstName).click({force: true})
         cy.get(transaction.amount_field).type("43").clear().blur()
         cy.get(transaction.amount_validation_message).should("be.visible")
             .and("contain", "Please enter a valid amount")
@@ -65,25 +65,25 @@ describe('New Transaction', () => {
         cy.get(transaction.create_submit_request).should("be.disabled")
     })
 
-        searchAttrs.forEach((attr) => {
-            it(`Searching by "${attr}" attribute`, () => {
-                cy.wait("@getUsers")
-                cy.get(transaction.search_input).click({force: true}).type(targetUser[attr])
-                cy.wait("@usersSearch")
-                    .its("response.body.results")
-                    .should("have.length.gt", 0)
-                    .its("length")
-                    .then((resultsN) => {
-                        cy.get(transaction.contacts_list_item)
-                            .should("have.length", resultsN)
-                            .first()
-                            .contains(targetUser[attr])
-                    })
-                cy.focused().clear()
-                cy.get(transaction.contacts_list).should("be.empty")
-            })
+    searchAttrs.forEach((attr) => {
+        it(`Searching by "${attr}" attribute`, () => {
+            cy.wait("@getUsers")
+            cy.get(transaction.search_input).click({force: true}).type(targetUser[attr])
+            cy.wait("@usersSearch")
+                .its("response.body.results")
+                .should("have.length.gt", 0)
+                .its("length")
+                .then((resultsN) => {
+                    cy.get(transaction.contacts_list_item)
+                        .should("have.length", resultsN)
+                        .first()
+                        .contains(targetUser[attr])
+                })
+            cy.focused().clear()
+            cy.get(transaction.contacts_list).should("be.empty")
         })
     })
+})
 
 context("User is able to receive pay and request transactions", () => {
     const payerUserName = "Allie2";
@@ -150,7 +150,7 @@ context("User is able to receive pay and request transactions", () => {
         cy.get(transaction.transaction_item)
             .first()
             .should("contain", noteText)
-            .click({ force: true })
+            .click({force: true})
         cy.get(transaction.accept_transaction_request_button).click()
         cy.wait("@updateTransaction").its("response.statusCode").should("eq", 204);
         cy.ui_logout()

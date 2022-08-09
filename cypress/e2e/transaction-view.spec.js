@@ -64,12 +64,12 @@ describe("Transaction View", function () {
             .click()
             .wait("@getTransactions");
 
-            cy.get(notification.comment_field)
-                .type(noteText + "{enter}")
-                .wait("@comment")
-                .its("response.statusCode")
-                .should("eq", 200);
-            cy.get(notification.comments_list).should("contain", noteText);
+        cy.get(notification.comment_field)
+            .type(noteText + "{enter}")
+            .wait("@comment")
+            .its("response.statusCode")
+            .should("eq", 200);
+        cy.get(notification.comments_list).should("contain", noteText);
     });
 
     it("accepts a transaction request", function () {
@@ -83,7 +83,7 @@ describe("Transaction View", function () {
         cy.get(transaction.personal_tab).click();
         cy.get(transaction.transaction_list)
             .contains(`${userA.name} requested ${userB.name}`)
-            .click({ force: true })
+            .click({force: true})
             .wait("@getTransactions");
         cy.get(transaction.reject_transaction_request_button).should("be.enabled");
         cy.get(transaction.accept_transaction_request_button)
@@ -105,7 +105,7 @@ describe("Transaction View", function () {
         cy.get(transaction.personal_tab).click();
         cy.get(transaction.transaction_list)
             .contains(`${userA.name} requested ${userB.name}`)
-            .click({ force: true })
+            .click({force: true})
             .wait("@getTransactions");
         cy.get(transaction.accept_transaction_request_button).should("be.enabled");
         cy.get(transaction.reject_transaction_request_button)
@@ -127,7 +127,7 @@ describe("Transaction View", function () {
         cy.get(transaction.personal_tab).click();
         cy.get(transaction.transaction_list)
             .contains(`${userA.name} requested ${userB.name}`)
-            .click({ force: true })
+            .click({force: true})
             .wait("@getTransactions");
         cy.get(transaction.accept_transaction_request_button).should("be.enabled");
         cy.get(transaction.reject_transaction_request_button)
