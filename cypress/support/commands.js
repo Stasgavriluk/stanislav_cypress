@@ -37,3 +37,8 @@ Cypress.Commands.add("ui_logout", () => {
     cy.url().should('contain', '/signin')
 })
 
+Cypress.Commands.add("ui_switchUser", (userName, password) => {
+    cy.ui_logout()
+    cy.ui_login(userName, password)
+})
+

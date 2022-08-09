@@ -1,236 +1,211 @@
 import {notification} from "../selectors/notification";
 import {transaction} from "../selectors/new-transaction";
 
+const userA = {
+    username: 'Katharina_Bernier',
+    name: 'Edgar Johns',
+}
+
+const userB = {
+    username: 'Tavares_Barrows',
+    name: 'Arely Kertzmann',
+}
+
+const userC = {
+    username: 'Allie2',
+    name: 'Kaylin Homenick',
+}
+
+const password = 's3cret'
+const transactionAmount = "5";
+
 describe("Notifications", function () {
-    before("db-seed", () => {
+
+    beforeEach("intercept API calls", () => {
         cy.task("db:seed");
+        cy.intercept("GET", "/users").as("getUsers");
+        cy.intercept("POST", "/transactions").as("createTransaction");
+        cy.intercept("GET", "/checkAuth").as("checkAuth");
+        cy.intercept("PATCH", "/transactions/*").as("updateTransaction");
+        cy.intercept("GET", "/transactions").as("getTransactions");
+        cy.intercept("POST", "/likes/*").as("like");
+        cy.intercept("GET", "/notifications").as("getNotifications");
+        cy.intercept("POST", "/comments/*").as("comment");
     });
 
-    beforeEach(function () {
-        cy.intercept('GET', '/notifications*').as('getNotifications')
-        cy.intercept('POST', '/transactions').as('createTransaction')
-        cy.intercept('PATCH', '/notifications/*').as('updateNotification')
-        cy.intercept('POST', '/comments/*').as('postComment')
-    })
-    const userA = {
-        username: 'Katharina_Bernier',
-        firstname: 'Edgar',
-        lastname: 'Johns',
-        id: 't45AiwidW',
-    }
+    it('User A likes a transaction of User B; User B gets notification that User A liked transaction ', function () {
+            cy.ui_login(userB.username, password)
+            cy.wait('@getNotifications')
+            cy.get(transaction.new_transaction_button).click()
+            transaction.createPayTransaction(
+                transactionAmount,
+                "B paid A",
+                userA.name
+            );
 
-    const userB = {
-        username: 'Tavares_Barrows',
-        firstname: 'Arely',
-        lastname: 'Kertzmann',
-        id: 'qywYp6hS0U',
-    }
+            cy.ui_switchUser(userA.username, password);
+            cy.get(transaction.personal_tab)
+                .click()
+                .wait("@getTransactions")
+                .its("response.statusCode")
+                .should("eq", 200);
+            cy.get(transaction.transaction_list)
+                .contains(`${userB.name} paid ${userA.name}`)
+                .first()
+                .click({ force: true });
+            cy.url().should("contain", "/transaction");
+            cy.get(notification.like_button).click();
+            cy.wait("@like").its("response.statusCode").should("eq", 200);
+            cy.get(notification.like_button).should('be.disabled');
+            cy.ui_switchUser(userB.username, password);
+            cy.get(notification.link).click();
+            cy.url().should("contain", "/notifications");
+            cy.wait("@getNotifications");
+            cy.get(notification.list).should(
+                "contain",
+                `${userA.name} liked a transaction`
+            );
+        });
 
-    const userC = {
-        username: 'Allie2',
-        firstname: 'Kaylin',
-        lastname: 'Homenick',
-        id: 'bDjUb4ir5O',
-    }
+    it("When user C likes a transaction between user A and user B, user A and user B should get notifications that user C liked transaction", () => {
+            cy.ui_login(userB.username, password);
+            cy.get(transaction.new_transaction_button).click()
+            transaction.createPayTransaction(
+                transactionAmount,
+                "B paid A",
+                userA.name
+            );
+            cy.ui_switchUser(userC.username, password);
+            cy.get(transaction.transaction_list)
+                .contains(`${userB.name} paid ${userA.name}`)
+                .first()
+                .click({ force: true });
+            cy.url().should("contain", "/transaction");
+            cy.get(notification.like_button).click();
+            cy.wait("@like").its("response.statusCode").should("eq", 200);
+            cy.get(notification.like_button).should('be.disabled');
+            cy.ui_switchUser(userA.username, password);
+            cy.get(notification.link).click();
+            cy.url().should("contain", "/notifications");
+            cy.wait("@getNotifications");
+            cy.get(notification.list).should(
+                "contain",
+                `${userC.name} liked a transaction`
+            );
+            cy.ui_switchUser(userB.username, password);
+            cy.get(notification.link).click();
+            cy.url().should("contain", "/notifications");
+            cy.wait("@getNotifications");
+            cy.get(notification.list).should(
+                "contain",
+                `${userC.name} liked a transaction`
+            );
+        });
 
-    const password = 's3cret'
+    it("When user A comments on a transaction of user B, user B should get notification that User A commented on their transaction", () => {
+            const commentText = "Thank You";
 
-    describe('notifications from user interactions', function () {
+            cy.ui_login(userB.username, password);
+            cy.get(transaction.new_transaction_button).click()
+            transaction.createPayTransaction(
+                transactionAmount,
+                "B paid A",
+                userA.name
+            );
+            cy.ui_switchUser(userA.username, password);
+            cy.get(transaction.personal_tab).click().wait("@getTransactions");
+            cy.get(transaction.transaction_list)
+                .contains(`${userB.name} paid ${userA.name}`)
+                .first()
+                .click({ force: true });
+            cy.url().should("contain", "/transaction");
+            cy.get(notification.comment_field)
+                .should("be.visible")
+                .type(`${commentText}{enter}`);
+            cy.wait("@comment").its("response.statusCode").should("eq", 200);
+            cy.get(notification.comments_list).should("contain", commentText);
+            cy.ui_switchUser(userA.username, password);
+            cy.get(notification.link).click();
+            cy.url().should("contain", "/notifications");
+            cy.wait("@getNotifications");
+            cy.get(notification.list).should(
+                "contain",
+                `${userA.name} commented on a transaction`
+            );
+        });
 
-        it('User A likes a transaction of User B; User B gets notification that User A liked transaction ', function () {
-        cy.ui_login(userA.username, password)
-        cy.wait('@getNotifications')
-        cy.visit('/transaction/7XaoAWOrn13')
+    it("When user C comments on a transaction between user A and user B, user A and B should get notifications that user C commented on their transaction", () => {
+            const commentText = "Thank You";
 
-        // cy.get(transaction.personal_tab).click()
-        // cy.get(notification.transaction_item).should('contain', userA.id )
-        // .and('contain' , userB.id).first().click()
+            cy.ui_login(userB.username, password);
+            cy.get(transaction.new_transaction_button).click()
+            transaction.createPayTransaction(
+                transactionAmount,
+                "B paid A",
+                userA.name
+            );
+            cy.ui_switchUser(userC.username, password);
+            cy.get(transaction.transaction_list)
+                .contains(`${userB.name} paid ${userA.name}`)
+                .first()
+                .click({ force: true });
+            cy.url().should("contain", "/transaction");
+            cy.get(notification.comment_field)
+                .should("be.visible")
+                .type(`${commentText}{enter}`);
+            cy.wait("@comment").its("response.statusCode").should("eq", 200);
+            cy.get(notification.comments_list).should("contain", commentText);
+            cy.ui_switchUser(userA.username, password);
+            cy.get(notification.link).click();
+            cy.url().should("contain", "/notifications");
+            cy.wait("@getNotifications");
+            cy.get(notification.list).should(
+                "contain",
+                `${userC.name} commented on a transaction`
+            );
+            cy.ui_switchUser(userB.username, password);
+            cy.get(notification.link).click();
+            cy.url().should("contain", "/notifications");
+            cy.wait("@getNotifications");
+            cy.get(notification.list).should(
+                "contain",
+                `${userC.name} commented on a transaction`
+            );
+        });
 
-        cy.wait('@getNotifications')
-        const likesCountSelector = '[data-test*=transaction-like-count]'
-        cy.contains(likesCountSelector, 0)
-        cy.get(notification.like_button).click()
-        // a successful "like" should disable the button and increment
-        // the number of likes
-        cy.get(notification.like_button).should('be.disabled')
-        cy.contains(likesCountSelector, 1)
+    it("When user A sends a payment to user B, user B should be notified of payment", () => {
+            cy.ui_login(userA.username, password);
+            cy.get(transaction.new_transaction_button).click()
+            transaction.createPayTransaction(
+                transactionAmount,
+                "A paid B",
+                userB.name
+            );
+            cy.ui_switchUser(userB.username, password);
+            cy.get(notification.link).click();
+            cy.wait("@getNotifications");
+            cy.get(notification.list).should(
+                "contain",
+                `${userB.name} received payment`
+            );
+        });
 
-        cy.ui_logout()
-        cy.ui_login(userB.username, password)
-        cy.wait('@getNotifications')
-            .its('response.body.results.length')
-            .as('preDismissedNotificationCount')
+    it("When user A sends a payment request to user C, user C should be notified of request from user A", () => {
+            cy.ui_login(userA.username, password);
+            cy.get(transaction.new_transaction_button).click()
+            transaction.createRequestTransaction(
+                transactionAmount,
+                "A requests C",
+                userC.name
+            );
+            cy.ui_switchUser(userC.username, password);
+            cy.get(notification.link).click();
+            cy.wait("@getNotifications");
+            cy.get(notification.list).should(
+                "contain",
+                `${userA.name} requested payment`
+            );
+        });
 
-        cy.visit('/notifications')
-        cy.wait('@getNotifications')
-
-        cy.get(notification.list_item)
-            .first()
-            .should('contain', userA.firstname )
-            .and('contain', 'liked')
-
-        cy.get(notification.dismiss_button).first().click({ force: true })
-        cy.wait('@updateNotification')
-
-        cy.get('@preDismissedNotificationCount').then((count) => {
-            cy.get(notification.list_item).should('have.length.lessThan', Number(count))
-        })
-    })
-
-        it('User C likes a transaction between User A and User B; User A and User B get notifications that User C liked transaction', function () {
-        cy.ui_login(userC.username, password)
-        cy.wait('@getNotifications')
-        cy.visit('/transaction/7XaoAWOrn13')
-
-        const likesCountSelector = '[data-test*=transaction-like-count]'
-        cy.contains(likesCountSelector, 1)
-        cy.get(notification.like_button).click()
-        cy.get(notification.like_button).should('be.disabled')
-        cy.contains(likesCountSelector, 2)
-        cy.ui_logout()
-        cy.ui_login(userA.username, password)
-
-        cy.get(notification.link).click()
-        cy.wait('@getNotifications')
-        cy.location('pathname').should('equal', '/notifications')
-
-        cy.get(notification.list_item)
-            .first()
-            .should('contain', userC.firstname)
-            .and('contain', 'liked')
-
-        cy.ui_logout()
-        cy.ui_login(userB.username, password)
-
-        cy.get(notification.link).click()
-        cy.wait('@getNotifications')
-
-        cy.get(notification.list_item)
-            .first()
-            .should('contain', userC.firstname)
-            .and('contain', 'liked')
-
-    })
-
-        it('User A comments on a transaction of User B; User B gets notification that User A commented on their transaction', function () {
-        cy.ui_login(userA.username, password)
-        cy.wait('@getNotifications')
-        cy.visit('/transaction/7XaoAWOrn13')
-
-        cy.get(notification.comment_field).type('Thank You{enter}')
-        cy.wait('@postComment')
-        cy.ui_logout()
-        cy.ui_login(userB.username, password)
-
-        cy.get(notification.link).click()
-        cy.wait('@getNotifications')
-
-        cy.get(notification.list_item)
-            .first()
-            .should('contain', userA.firstname)
-            .and('contain', 'commented')
-    })
-
-        it('User C comments on a transaction between User A and User B; User A and B get notifications that User C commented on their transaction', function () {
-        cy.ui_login(userC.username, password);
-        cy.wait('@getNotifications')
-        cy.visit('/transaction/7XaoAWOrn13')
-        cy.get(notification.comment_field).type('Thank You{enter}')
-        cy.wait('@postComment')
-
-        cy.ui_logout()
-        cy.ui_login(userA.username, password)
-        cy.get(notification.link).click()
-        cy.wait('@getNotifications')
-
-        cy.get(notification.list_item)
-            .first()
-            .should('contain', userC.firstname)
-            .and('contain', 'commented')
-
-        cy.ui_logout()
-        cy.ui_login(userB.username, password)
-        cy.get(notification.link).click()
-        cy.wait('@getNotifications')
-        cy.get(notification.list_item)
-            .first()
-            .should('contain', userC.firstname)
-            .and('contain', 'commented')
-    })
-
-        it('User A sends a payment to User B', function () {
-        cy.ui_login(userA.username, password)
-        cy.wait('@getNotifications')
-        cy.get(transaction.new_transaction_button).click()
-
-        const transactionAmount = 5
-        const noteText = '🍕Pizza'
-
-        cy.get(transaction.contacts_list)
-            .should('be.visible')
-            .contains('Arely Kertzmann')
-            .click()
-        cy.get(transaction.selected_contact_title).should(
-            'have.text', 'Arely Kertzmann')
-        cy.get(transaction.amount_field)
-            .type(transactionAmount)
-            .should('contain.value', transactionAmount)
-        cy.get(transaction.note_field)
-            .type(noteText)
-            .should('contain.value', noteText)
-        cy.get(transaction.create_submit_payment).click()
-        cy.wait('@createTransaction').its('response.statusCode').should('eq', 200)
-        cy.get(transaction.alert_bar_success).should('be.visible').and('have.text', 'Transaction Submitted!')
-
-        cy.ui_logout()
-        cy.ui_login(userB.username, password)
-        cy.get(notification.link).click()
-        cy.get(notification.list_item)
-            .first()
-            .should('contain', userB.firstname)
-            .and('contain', 'received payment')
-    })
-
-        it('User A sends a payment request to User C', function () {
-        cy.ui_login(userA.username, password)
-        cy.wait('@getNotifications')
-        cy.get(transaction.new_transaction_button).click()
-
-        const transactionAmount = 30
-        const noteText = '🛫🛬 Airfare'
-
-        cy.get(transaction.contacts_list)
-            .should('be.visible')
-            .contains('Kaylin Homenick')
-            .click()
-        cy.get(transaction.selected_contact_title).should(
-            'have.text', 'Kaylin Homenick'
-        )
-        cy.get(transaction.amount_field)
-            .type(transactionAmount)
-            .should('contain.value', transactionAmount);
-        cy.get(transaction.note_field)
-            .type(noteText)
-            .should('contain.value', noteText);
-        cy.get(transaction.create_submit_request).click();
-        cy.wait('@createTransaction').its('response.statusCode').should('eq', 200);
-
-        cy.ui_logout()
-        cy.ui_login(userC.username, password)
-        cy.get(notification.link).click()
-        cy.get(notification.list_item)
-            .first()
-            .should('contain', userA.firstname)
-            .and('contain', 'requested payment')
-    })
-    })
-    it('renders an empty notifications state', function () {
-        cy.intercept('GET', '/notifications', []).as('notifications')
-        cy.ui_login(userA.username, password)
-        cy.get(notification.sidenav_notifications).click()
-        cy.location('pathname').should('equal', '/notifications')
-        cy.get(notification.list).should('not.exist')
-        cy.get(notification.list_header).should('contain', 'No Notifications')
-
-    })
 })
+
