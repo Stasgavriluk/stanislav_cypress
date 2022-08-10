@@ -1,7 +1,7 @@
 export const main_page = {
-    user_onboarding_next: '[data-test="user-onboarding-next"]',
     onboarding_dialog_content: '[data-test="user-onboarding-dialog-content"]',
     bank_name: '#bankaccount-bankName-input',
+    bankaccount_new: '[data-test="bankaccount-new"]',
     routing_number: '#bankaccount-routingNumber-input',
     account_number: '#bankaccount-accountNumber-input',
     bankaccount_submit_button: '[data-test="bankaccount-submit"]',

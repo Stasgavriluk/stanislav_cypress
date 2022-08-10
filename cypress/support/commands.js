@@ -25,6 +25,8 @@ Cypress.Commands.add("ui_sign_up", (userName, password) => {
 })
 
 Cypress.Commands.add("ui_onboarding", () => {
+    cy.get(main_page.onboarding_dialog_content).should('be.visible')
+    cy.get('[data-test="user-onboarding-next"]').click()
     cy.get(main_page.bank_name).type('Privat Bank')
     cy.get(main_page.routing_number).type('123456789')
     cy.get(main_page.account_number).type('987654321')

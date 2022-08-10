@@ -1,19 +1,35 @@
 import {settings} from "../selectors/user_settings";
+import {functions} from "../helpers/functions";
+
+const username = functions.generateUsername();
+const password = "RestTest1!";
+const firstName = "Huge";
+const lastName = "Onil";
+const email = "hugeonil@mailinator.com";
+const phoneNumber = "0987654321";
 
 describe("User Settings", function () {
-    beforeEach(function () {
+    before("prepare an account", () => {
         cy.task("db:seed");
-        cy.intercept("PATCH", "/users/*").as("updateUser");
-        cy.intercept("GET", "/notifications*").as("getNotifications");
-        const username = "Tavares_Barrows"
-        const password = "s3cret"
+        cy.ui_sign_up(username, password);
+        cy.ui_login(username, password);
+        cy.ui_onboarding();
+        cy.ui_logout();
+    });
+
+    beforeEach(function () {
         cy.ui_login(username, password);
         cy.get(settings.user).click();
+        cy.url().should("contain", "/user/settings");
+        cy.intercept("PATCH", "/users/*").as("updateUser");
     });
 
     it("renders the user settings form", function () {
-        cy.wait("@getNotifications");
         cy.get(settings.user_form).should("be.visible");
+        cy.get(settings.first_name_input).should("be.visible");
+        cy.get(settings.last_name_input).should("be.visible");
+        cy.get(settings.email_input).should("be.visible");
+        cy.get(settings.phone_input).should("be.visible");
         cy.location("pathname").should("include", "/user/settings");
     });
 
@@ -49,39 +65,57 @@ describe("User Settings", function () {
     });
 
     it("updates first name, last name, email and phone number", function () {
-        cy.get(settings.first_name_input).clear().type("New First Name");
-        cy.get(settings.last_name_input).clear().type("New Last Name");
-        cy.get(settings.email_input).clear().type("email@email.com");
-        cy.get(settings.phone_input).clear().type("6155551212").blur();
+        cy.get(settings.first_name_input).clear().type(firstName);
+        cy.get(settings.last_name_input).clear().type(lastName);
+        cy.get(settings.email_input).clear().type(email);
+        cy.get(settings.phone_input).clear().type(phoneNumber).blur();
 
         cy.get(settings.submit_button).should("not.be.disabled");
-        cy.get(settings.submit_button).click();
-
-        cy.wait("@updateUser").its("response.statusCode").should("equal", 204);
-        cy.get(settings.user_full_name).should("contain", "New First Name");
+        cy.get(settings.submit_button)
+            .click()
+            .wait("@updateUser")
+            .its("response.statusCode")
+            .should("eq", 204);
+        cy.get(settings.user_full_name).should("contain", firstName);
     });
 
     it("User should be able to update first name", function () {
         cy.get(settings.first_name_input).clear().type("New First Name");
         cy.get(settings.submit_button).should("not.be.disabled");
-        cy.get(settings.submit_button).click();
+        cy.get(settings.submit_button)
+            .click()
+            .wait("@updateUser")
+            .its("response.statusCode")
+            .should("eq", 204);
     });
 
     it("User should be able to update last name", function () {
         cy.get(settings.last_name_input).clear().type("New Last Name");
         cy.get(settings.submit_button).should("not.be.disabled");
-        cy.get(settings.submit_button).click();
+        cy.get(settings.submit_button)
+            .click()
+            .wait("@updateUser")
+            .its("response.statusCode")
+            .should("eq", 204);
     });
 
     it("User should be able to update email", function () {
         cy.get(settings.email_input).clear().type("email@email.com");
         cy.get(settings.submit_button).should("not.be.disabled");
-        cy.get(settings.submit_button).click();
+        cy.get(settings.submit_button)
+            .click()
+            .wait("@updateUser")
+            .its("response.statusCode")
+            .should("eq", 204);
     });
 
     it("User should be able to update phone number", function () {
         cy.get(settings.phone_input).clear().type("6155551212").blur();
         cy.get(settings.submit_button).should("not.be.disabled");
-        cy.get(settings.submit_button).click();
+        cy.get(settings.submit_button)
+            .click()
+            .wait("@updateUser")
+            .its("response.statusCode")
+            .should("eq", 204);
     });
 });
