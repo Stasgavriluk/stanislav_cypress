@@ -1,6 +1,5 @@
 /// <reference types="cypress" />
 import {functions} from "../helpers/functions";
-import {main_page} from "../selectors/main_page.selector";
 import {sign_in_page} from "../selectors/sign_in_page";
 import {sign_up_page} from "../selectors/sign_up_page";
 
@@ -60,7 +59,7 @@ describe('UI tests for sign in page', () => {
 })
 
 describe('UI test for sign-up, login and logout', () => {
-    const userName = functions.generateUsername()
+    const username = functions.generateUsername()
     const password = "RestTest1!"
 
     before('Visit sign-up page', () => {
@@ -108,20 +107,18 @@ describe('UI test for sign-up, login and logout', () => {
 
     // sign-up
     it('should allow a visitor to sign-up', () => {
-        cy.ui_sign_up(userName, password)
+        cy.sign_up_ui(username, password);
     })
 
     // login
     it('should allow a visitor to login', () => {
-        cy.ui_login(userName, password)
+        cy.login_ui(username, password);
     })
 
     //logout
     it('should allow a visitor to logout', () => {
-        cy.get(main_page.onboarding_dialog_content).should('be.visible')
-        cy.get('[data-test="user-onboarding-next"]').click()
-        cy.ui_onboarding()
-        cy.ui_logout()
+        cy.onboarding_ui()
+        cy.logout_ui()
     })
 
     // errors for login

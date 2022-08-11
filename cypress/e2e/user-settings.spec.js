@@ -11,14 +11,14 @@ const phoneNumber = "0987654321";
 describe("User Settings", function () {
     before("prepare an account", () => {
         cy.task("db:seed");
-        cy.ui_sign_up(username, password);
-        cy.ui_login(username, password);
-        cy.ui_onboarding();
-        cy.ui_logout();
+        cy.sign_up_ui(username, password);
+        cy.login_ui(username, password);
+        cy.onboarding_ui();
+        cy.logout_ui();
     });
 
     beforeEach(function () {
-        cy.ui_login(username, password);
+        cy.login_ui(username, password);
         cy.get(settings.user).click();
         cy.url().should("contain", "/user/settings");
         cy.intercept("PATCH", "/users/*").as("updateUser");

@@ -3,22 +3,22 @@ import {functions} from "../helpers/functions";
 import {main_page} from "../selectors/main_page.selector";
 
 describe('bank accounts tests', () => {
-    const userName = functions.generateUsername()
+    const username = functions.generateUsername()
     const password = "RestTest1!"
     const bankName = "Privat Bank";
 
     before("Prepare account", () => {
         cy.task("db:seed");
-        cy.ui_sign_up(userName, password);
-        cy.ui_login(userName, password);
-        cy.ui_onboarding();
-        cy.ui_logout();
+        cy.sign_up_ui(username, password);
+        cy.login_ui(username, password);
+        cy.onboarding_ui();
+        cy.logout_ui();
     });
 
     beforeEach(
         "Intercept graphql requests and proceed to bank accounts page",
         () => {
-            cy.ui_login(userName, password);
+            cy.login_ui(username, password);
             cy.get(main_page.bank_accounts_button).click();
             cy.url().should("contain", "bankaccounts");
             cy.intercept("POST", "/graphql", (req) => {
