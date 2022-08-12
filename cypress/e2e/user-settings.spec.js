@@ -11,7 +11,7 @@ const phoneNumber = "0987654321";
 describe("User Settings", function () {
     before("prepare an account", () => {
         cy.task("db:seed");
-        cy.sign_up_ui(username, password);
+        cy.sign_up_API(username, password);
         cy.login_ui(username, password);
         cy.onboarding_ui();
         cy.logout_ui();
