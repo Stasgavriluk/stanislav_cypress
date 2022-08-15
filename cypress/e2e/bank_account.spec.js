@@ -10,15 +10,15 @@ describe('bank accounts tests', () => {
     before("Prepare account", () => {
         cy.task("db:seed");
         cy.sign_up_API(username, password);
-        cy.login_ui(username, password);
+        cy.log_in_API(username, password);
         cy.onboarding_ui();
-        cy.logout_ui();
+        cy.log_out_API();
     });
 
     beforeEach(
         "Intercept graphql requests and proceed to bank accounts page",
         () => {
-            cy.login_ui(username, password);
+            cy.log_in_API(username, password);
             cy.get(main_page.bank_accounts_button).click();
             cy.url().should("contain", "bankaccounts");
             cy.intercept("POST", "/graphql", (req) => {

@@ -55,13 +55,68 @@ Cypress.Commands.add("sign_up_API", (username, password) => {
 })
 
 Cypress.Commands.add("log_in_API", (username, password ) => {
-    return cy.request("POST", "http://localhost:3001/login", {
-        username,
-        password,
-    })
+    const log = Cypress.log({
+        name: "loginbyxstate",
+        displayName: "LOGIN BY XSTATE",
+        message: [`🔐 Authenticating | ${username}`],
+        autoEnd: false,
+    });
+
+    cy.intercept("POST", "/login").as("loginUser");
+    cy.intercept("GET", "/checkAuth").as("getUserProfile");
+    cy.visit("/signin", { log: false });
+
+    cy.window({ log: false }).then((win) =>
+        win.authService.send("LOGIN", { username, password })
+    );
+
+    cy.wait("@loginUser").then((loginUser) => {
+        log.set({
+            consoleProps() {
+                return {
+                    username,
+                    password,
+                    userId: loginUser.response.body.user.id,
+                };
+            },
+        });
+    });
+    cy.url().should("not.contain", "/signin");
+
+    return cy
+        .get('[data-test="list-skeleton"]')
+        .should("not.exist")
+        .then(() => {
+            log.snapshot("after");
+            log.end();
+        });
 })
 
 Cypress.Commands.add("log_out_API", ( ) => {
-    cy.request("POST", "http://localhost:3001/logout")
+    const log = Cypress.log({
+        name: "logoutByXstate",
+        displayName: "LOGOUT BY XSTATE",
+        message: [`🔒 Logging out current user`],
+        // @ts-ignore
+        autoEnd: false,
+    });
+
+    cy.window({ log: false }).then((win) => {
+        log.snapshot("before");
+        win.authService.send("LOGOUT");
+    });
+
+    return cy
+        .location("pathname")
+        .should("equal", "/signin")
+        .then(() => {
+            log.snapshot("after");
+            log.end();
+        });
+})
+
+Cypress.Commands.add("switchUser_API", (username, password = "s3cret") => {
+    cy.log_out_API();
+    cy.log_in_API(username, password);
 })
 

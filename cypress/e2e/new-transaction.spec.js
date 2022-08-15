@@ -32,7 +32,7 @@ describe('New Transaction', () => {
         cy.intercept("POST", "/transactions").as("createTransaction");
         cy.intercept("GET", "/checkAuth").as("checkAuth");
         cy.intercept("GET", "/users/search*").as("usersSearch");
-        cy.login_ui(username, password)
+        cy.log_in_API(username, password)
         cy.get(transaction.new_transaction_button).click()
     })
 
@@ -104,15 +104,15 @@ context("User is able to receive pay and request transactions", () => {
     it("submits a transaction payment and verifies the deposit for the receiver", () => {
         let payerStartBalance, receiverStartBalance
 
-        cy.login_ui(receiverUserName, password)
+        cy.log_in_API(receiverUserName, password)
         cy.get(transaction.user_balance)
             .invoke("text")
             .then((x) => {
                 receiverStartBalance = x
                 expect(receiverStartBalance).to.match(/\$\d/)
             })
-        cy.logout_ui()
-        cy.login_ui(payerUserName, password)
+        cy.log_out_API()
+        cy.log_in_API(payerUserName, password)
         cy.get(transaction.user_balance)
             .invoke("text")
             .then((x) => {
@@ -124,8 +124,8 @@ context("User is able to receive pay and request transactions", () => {
         cy.get(transaction.user_balance).should(($el) => {
             expect($el.text()).to.not.equal(payerStartBalance)
         })
-        cy.logout_ui()
-        cy.login_ui(receiverUserName, password)
+        cy.log_out_API()
+        cy.log_in_API(receiverUserName, password)
         cy.url().should("not.contain", "/signin")
         cy.get(transaction.user_balance).should(($el) => {
             expect($el.text()).to.not.equal(receiverStartBalance)
@@ -135,7 +135,7 @@ context("User is able to receive pay and request transactions", () => {
     it("submits a transaction request and accepts the request for the receiver", () => {
         let receiverStartBalance
 
-        cy.login_ui(payerUserName, password)
+        cy.log_in_API(payerUserName, password)
         cy.get(transaction.user_balance)
             .invoke("text")
             .then((x) => {
@@ -144,8 +144,8 @@ context("User is able to receive pay and request transactions", () => {
             })
         cy.get(transaction.new_transaction_button).click()
         transaction.createRequestTransaction(transactionAmount, noteText)
-        cy.logout_ui()
-        cy.login_ui(receiverUserName, password)
+        cy.log_out_API()
+        cy.log_in_API(receiverUserName, password)
         cy.get(transaction.personal_tab).click()
         cy.get(transaction.transaction_item)
             .first()
@@ -153,8 +153,8 @@ context("User is able to receive pay and request transactions", () => {
             .click({force: true})
         cy.get(transaction.accept_transaction_request_button).click()
         cy.wait("@updateTransaction").its("response.statusCode").should("eq", 204);
-        cy.logout_ui()
-        cy.login_ui(payerUserName, password)
+        cy.log_out_API()
+        cy.log_in_API(payerUserName, password)
         cy.url().should("not.contain", "/signin")
         cy.get(transaction.user_balance).should(($el) => {
             expect($el.text()).to.not.equal(receiverStartBalance)

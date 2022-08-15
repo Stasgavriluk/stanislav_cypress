@@ -12,13 +12,13 @@ describe("User Settings", function () {
     before("prepare an account", () => {
         cy.task("db:seed");
         cy.sign_up_API(username, password);
-        cy.login_ui(username, password);
+        cy.log_in_API(username, password);
         cy.onboarding_ui();
-        cy.logout_ui();
+        cy.log_out_API();
     });
 
     beforeEach(function () {
-        cy.login_ui(username, password);
+        cy.log_in_API(username, password);
         cy.get(settings.user).click();
         cy.url().should("contain", "/user/settings");
         cy.intercept("PATCH", "/users/*").as("updateUser");

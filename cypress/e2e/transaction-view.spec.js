@@ -29,7 +29,7 @@ describe("Transaction View", function () {
         cy.intercept("GET", "/transactions/*").as("getTransactions");
         cy.intercept("POST", "/likes/*").as("like");
         cy.intercept("POST", "/comments/*").as("comment");
-        cy.login_ui(userA.username, password);
+        cy.log_in_API(userA.username, password);
     });
 
     it("transactions navigation tabs are hidden on a transaction view page", function () {
@@ -79,7 +79,7 @@ describe("Transaction View", function () {
             noteText,
             userB.name
         );
-        cy.switchUser_ui(userB.username, password);
+        cy.switchUser_API(userB.username, password);
         cy.get(transaction.personal_tab).click();
         cy.get(transaction.transaction_list)
             .contains(`${userA.name} requested ${userB.name}`)
@@ -101,7 +101,7 @@ describe("Transaction View", function () {
             noteText,
             userB.name
         );
-        cy.switchUser_ui(userB.username, password);
+        cy.switchUser_API(userB.username, password);
         cy.get(transaction.personal_tab).click();
         cy.get(transaction.transaction_list)
             .contains(`${userA.name} requested ${userB.name}`)
@@ -123,7 +123,7 @@ describe("Transaction View", function () {
             noteText,
             userB.name
         );
-        cy.switchUser_ui(userB.username, password);
+        cy.switchUser_API(userB.username, password);
         cy.get(transaction.personal_tab).click();
         cy.get(transaction.transaction_list)
             .contains(`${userA.name} requested ${userB.name}`)
