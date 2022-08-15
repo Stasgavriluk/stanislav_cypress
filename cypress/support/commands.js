@@ -44,13 +44,13 @@ Cypress.Commands.add("switchUser_ui", (username, password) => {
     cy.login_ui(username, password)
 })
 
-Cypress.Commands.add("sign_up_API", (username, password,firstName, lastName, confirmPassword ) => {
+Cypress.Commands.add("sign_up_API", (username, password) => {
     return cy.request("POST", "http://localhost:3001/users", {
-        firstName,
-        lastName,
+        firstName: "Aleks",
+        lastName: "Morgan",
         username,
-        password,
-        confirmPassword,
+        password: password,
+        confirmPassword: password,
     })
 })
 
