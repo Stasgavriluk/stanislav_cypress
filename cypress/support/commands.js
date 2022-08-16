@@ -2,6 +2,8 @@ import {sign_in_page} from "../selectors/sign_in_page";
 import {sign_up_page} from "../selectors/sign_up_page";
 import {main_page} from "../selectors/main_page.selector";
 
+const apiUrl = "http://localhost:3001";
+
 Cypress.Commands.add("login_ui", (username, password) => {
     cy.visit("/signin")
     cy.intercept("POST", "/login").as("signin")
@@ -45,7 +47,7 @@ Cypress.Commands.add("switchUser_ui", (username, password) => {
 })
 
 Cypress.Commands.add("sign_up_API", (username, password) => {
-    return cy.request("POST", "http://localhost:3001/users", {
+    return cy.request("POST", `${apiUrl}/users`, {
         firstName: "Aleks",
         lastName: "Morgan",
         username,
@@ -120,3 +122,37 @@ Cypress.Commands.add("switchUser_API", (username, password = "s3cret") => {
     cy.log_in_API(username, password);
 })
 
+Cypress.Commands.add("create_bank_account_API", (bankName, accountNumber, routingNumber) => {
+    cy.request("POST", `${apiUrl}/bankAccounts`, {
+        bankName,
+        accountNumber,
+        routingNumber,
+    }).then((response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body.account.id).to.be.a("string");
+    })
+})
+
+Cypress.Commands.add("delete_bank_account_API", (bankAccountId) => {
+    cy.request("DELETE", `${apiUrl}/bankAccounts/${bankAccountId}`)
+        .then((response) => {
+        expect(response.status).to.eq(200);
+    })
+})
+
+Cypress.Commands.add("add_contact_API", (userId) => {
+    cy.request("POST", `${apiUrl}/contacts`, {
+        contactUserId: userId,
+    })
+        .then((response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body.contact.id).to.be.a("string");
+    })
+});
+
+Cypress.Commands.add("delete_contact_API", (userId) => {
+    cy.request("DELETE", `${apiUrl}/contacts/${userId}`)
+        .then((response) => {
+            expect(response.status).to.eq(200);
+        })
+});

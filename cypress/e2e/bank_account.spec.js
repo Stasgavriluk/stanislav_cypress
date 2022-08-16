@@ -5,7 +5,9 @@ import {main_page} from "../selectors/main_page.selector";
 describe('bank accounts tests', () => {
     const username = functions.generateUsername()
     const password = "RestTest1!"
-    const bankName = "Privat Bank";
+    const bankName = "Monobank"
+    const accountNumber = "123456789"
+    const routingNumber = "987654321"
 
     before("Prepare account", () => {
         cy.task("db:seed");
@@ -85,8 +87,8 @@ describe('bank accounts tests', () => {
     it("allows user to create new bank account", () => {
         cy.get(main_page.bankaccount_new).click()
         cy.get(main_page.bank_name).clear().type(bankName);
-        cy.get(main_page.routing_number).clear().type("123123123");
-        cy.get(main_page.account_number).clear().type("1231231232");
+        cy.get(main_page.routing_number).clear().type(accountNumber);
+        cy.get(main_page.account_number).clear().type(routingNumber);
         cy.get(main_page.bankaccount_submit_button).should("be.enabled").click();
         cy.wait("@gqlCreateBankAccountMutation")
             .its("response.statusCode")
