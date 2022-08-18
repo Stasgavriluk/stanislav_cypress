@@ -29,7 +29,7 @@ describe("Transaction View", function () {
         cy.intercept("GET", "/transactions/*").as("getTransactions");
         cy.intercept("POST", "/likes/*").as("like");
         cy.intercept("POST", "/comments/*").as("comment");
-        cy.ui_login(userA.username, password);
+        cy.log_in_API(userA.username, password);
     });
 
     it("transactions navigation tabs are hidden on a transaction view page", function () {
@@ -64,12 +64,12 @@ describe("Transaction View", function () {
             .click()
             .wait("@getTransactions");
 
-            cy.get(notification.comment_field)
-                .type(noteText + "{enter}")
-                .wait("@comment")
-                .its("response.statusCode")
-                .should("eq", 200);
-            cy.get(notification.comments_list).should("contain", noteText);
+        cy.get(notification.comment_field)
+            .type(noteText + "{enter}")
+            .wait("@comment")
+            .its("response.statusCode")
+            .should("eq", 200);
+        cy.get(notification.comments_list).should("contain", noteText);
     });
 
     it("accepts a transaction request", function () {
@@ -79,11 +79,11 @@ describe("Transaction View", function () {
             noteText,
             userB.name
         );
-        cy.ui_switchUser(userB.username, password);
+        cy.switchUser_API(userB.username, password);
         cy.get(transaction.personal_tab).click();
         cy.get(transaction.transaction_list)
             .contains(`${userA.name} requested ${userB.name}`)
-            .click({ force: true })
+            .click({force: true})
             .wait("@getTransactions");
         cy.get(transaction.reject_transaction_request_button).should("be.enabled");
         cy.get(transaction.accept_transaction_request_button)
@@ -101,11 +101,11 @@ describe("Transaction View", function () {
             noteText,
             userB.name
         );
-        cy.ui_switchUser(userB.username, password);
+        cy.switchUser_API(userB.username, password);
         cy.get(transaction.personal_tab).click();
         cy.get(transaction.transaction_list)
             .contains(`${userA.name} requested ${userB.name}`)
-            .click({ force: true })
+            .click({force: true})
             .wait("@getTransactions");
         cy.get(transaction.accept_transaction_request_button).should("be.enabled");
         cy.get(transaction.reject_transaction_request_button)
@@ -123,11 +123,11 @@ describe("Transaction View", function () {
             noteText,
             userB.name
         );
-        cy.ui_switchUser(userB.username, password);
+        cy.switchUser_API(userB.username, password);
         cy.get(transaction.personal_tab).click();
         cy.get(transaction.transaction_list)
             .contains(`${userA.name} requested ${userB.name}`)
-            .click({ force: true })
+            .click({force: true})
             .wait("@getTransactions");
         cy.get(transaction.accept_transaction_request_button).should("be.enabled");
         cy.get(transaction.reject_transaction_request_button)

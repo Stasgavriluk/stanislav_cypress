@@ -1,27 +1,65 @@
 /// <reference types="cypress" />
-import { functions } from "../helpers/functions";
-import { main_page } from "../selectors/main_page.selector";
+import {functions} from "../helpers/functions";
+import {main_page} from "../selectors/main_page.selector";
 
 describe('bank accounts tests', () => {
-    const userName = functions.generateUsername()
+    const username = functions.generateUsername()
     const password = "RestTest1!"
+    const bankName = "Monobank"
+    const accountNumber = "123456789"
+    const routingNumber = "987654321"
 
-    before('visit onboarding page', () => {
+    before("Prepare account", () => {
         cy.task("db:seed");
-        cy.ui_sign_up(userName, password)
-        cy.ui_login(userName, password)
-        cy.get(main_page.onboarding_dialog_content).should('be.visible')
-        cy.get('[data-test="user-onboarding-next"]').click()
-    })
+        cy.sign_up_API(username, password);
+        cy.log_in_API(username, password);
+        cy.onboarding_ui();
+        cy.log_out_API();
+    });
+
+    beforeEach(
+        "Intercept graphql requests and proceed to bank accounts page",
+        () => {
+            cy.log_in_API(username, password);
+            cy.get(main_page.bank_accounts_button).click();
+            cy.url().should("contain", "bankaccounts");
+            cy.intercept("POST", "/graphql", (req) => {
+                const {body} = req;
+
+                if (
+                    body.hasOwnProperty("operationName") &&
+                    body.operationName === "ListBankAccount"
+                ) {
+                    req.alias = "gqlListBankAccountQuery";
+                }
+
+                if (
+                    body.hasOwnProperty("operationName") &&
+                    body.operationName === "CreateBankAccount"
+                ) {
+                    req.alias = "gqlCreateBankAccountMutation";
+                }
+
+                if (
+                    body.hasOwnProperty("operationName") &&
+                    body.operationName === "DeleteBankAccount"
+                ) {
+                    req.alias = "gqlDeleteBankAccountMutation";
+                }
+            });
+        }
+    );
 
     // errors for bank account page
     it('should show error for bank field', () => {
+        cy.get(main_page.bankaccount_new).click()
         cy.get(main_page.bankaccount_validation_message).should('not.exist')
         cy.get(main_page.bank_name).click().blur()
         cy.get(main_page.bankaccount_validation_message).should('be.visible').and('have.text', 'Enter a bank name')
     })
 
     it('should show error for routing number field', () => {
+        cy.get(main_page.bankaccount_new).click()
         cy.get(main_page.routing_number_validation_message).should('not.exist')
         cy.get(main_page.routing_number).click().blur()
         cy.get(main_page.routing_number_validation_message).should('be.visible').and('have.text', 'Enter a valid bank routing number')
@@ -34,6 +72,7 @@ describe('bank accounts tests', () => {
     })
 
     it('should show error for account number field', () => {
+        cy.get(main_page.bankaccount_new).click()
         cy.get(main_page.account_number_validation_message).should('not.exist')
         cy.get(main_page.account_number).click().blur()
         cy.get(main_page.account_number_validation_message).should('be.visible').and('have.text', 'Enter a valid bank account number')
@@ -45,23 +84,25 @@ describe('bank accounts tests', () => {
         cy.get(main_page.account_number).clear()
     })
 
-    // successful onboarding
-    it('should successful onboarding', () => {
-        cy.ui_onboarding()
-    })
+    it("allows user to create new bank account", () => {
+        cy.get(main_page.bankaccount_new).click()
+        cy.get(main_page.bank_name).clear().type(bankName);
+        cy.get(main_page.routing_number).clear().type(accountNumber);
+        cy.get(main_page.account_number).clear().type(routingNumber);
+        cy.get(main_page.bankaccount_submit_button).should("be.enabled").click();
+        cy.wait("@gqlCreateBankAccountMutation")
+            .its("response.statusCode")
+            .should("eq", 200);
+        cy.get(main_page.bank_accounts_list).should("contain", bankName);
+    });
 
     // delete bank account
     it('should delete bank account', () => {
-        cy.reload()
-        cy.ui_sign_up(userName, password)
-        cy.ui_login(userName, password)
-        cy.get(main_page.onboarding_dialog_content).should('be.visible')
-        cy.get('[data-test="user-onboarding-next"]').click()
-        cy.ui_onboarding()
-        cy.get(main_page.bank_accounts_button).should('be.visible').click()
-        cy.get(main_page.bank_accounts_list).should('be.visible')
-        cy.get(main_page.bank_accounts_delete).should('be.visible').click()
-        cy.get(main_page.bank_accounts_list).contains( 'Deleted')
+        cy.get(main_page.bank_accounts_delete).first().click();
+        cy.wait("@gqlDeleteBankAccountMutation")
+            .its("response.statusCode")
+            .should("eq", 200);
+        cy.get(main_page.bank_accounts_list).children().contains("Deleted");
     })
 })
 
